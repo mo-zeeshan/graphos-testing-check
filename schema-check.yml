@@ -1,0 +1,30 @@
+name: Schema Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-schema:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'  # Use the version that matches your project
+
+      - name: Install Rover CLI
+        run: npm install -g @apollo/rover
+
+      - name: Run Schema Check
+        run: rover graph check ${{ secrets.APOLLO_GRAPH_REF }} --schema schema.gql
+        env:
+          APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
